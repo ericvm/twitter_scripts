@@ -13,7 +13,13 @@
  * this class https://youtu.be/7-nX3YOC4O      *
  * * * * * * * * * * * * * * * * * * * * * * * */
 
-
+/* * * * * * * * * * * * * * * * * * * * * * * *
+ * usage:                                      *
+ *    $ node write_tweet.js "text in quotes"   *
+ *       img1 img2 img3 img4                   *
+ *                                             *
+ * all img are optional                        *
+ * * * * * * * * * * * * * * * * * * * * * * * */
 
 console.log("The script started\n\n");
 
