@@ -1,0 +1,14 @@
+{
+  "name": "twitter scripts",
+  "version": "1.0.0",
+  "description": "testing",
+  "main": "fbot.js",
+  "scripts": {
+    "test": "run"
+  },
+  "author": "Laura Viglioni",
+  "license": "GNU GENERAL PUBLIC LICENSE v3",
+  "dependencies": {
+    "twit": "^2.2.11"
+  }
+}
