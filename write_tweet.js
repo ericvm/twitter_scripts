@@ -98,8 +98,8 @@ function Tweet(tweet_text,img_ids,reply_id){
 // This function generate a thread with tweets, if there are more than one tweet to be posted
 function TweetThread(text_array,tweet_id){
     if(text_array.length){
-	let tweet = text_array.shift()
-	Tweet(tweet,[],tweet_id).then(tweet_id =>TweetThread(text_array,tweet_id))
+	let tweet = text_array.shift();
+	Tweet(tweet,[],tweet_id).then(tweet_id =>TweetThread(text_array,tweet_id));
     }
 }
 
