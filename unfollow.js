@@ -54,17 +54,11 @@ function buildFriendlist(friend_list) {
 }
 
 function kill(friend_id){
-
-	T.post('friendships/destroy', {id: friend_id},
+    T.post('friendships/destroy', {id: friend_id},
 	   (err,data) => {
-	       if(err){
-		   console.log(err.message + " Id: " + friend_id);
-	       }
-	       else{
-		   console.log("unfollowed "+ data.screen_name);
-	       }
+	       if(err){  console.log(err);}// + " Id: " + friend_id); }
+	       else{ console.log("unfollowed "+ data.screen_name); }
 	   });
-
 }
 
 
@@ -77,20 +71,18 @@ function unfollowAll(followers, friends, friend_list){
     }); 
 }
 
+function unfollow(){
+    var friend_list = ["larochkk", "paulaemcima", "phaser_"];
 
-var friend_list = ["larochkk", "paulaemcima", "phaser_"];
-
-// Promise.all(
-//     [getFollowers(), getFriends(), buildFriendlist(friend_list)]
-// ).then( ([followers, friends, friend_list]) => {
-//     console.log(followers.length, friends.length, friend_list);
-
-//     unfollowAll(followers,friends, friend_list);
-
-// });
-
-//getScreenNameFromId(981656935744331800);
-
+    Promise.all(
+        [getFollowers(), getFriends(), buildFriendlist(friend_list)]
+    ).then( ([followers, friends, friend_list]) => {
+        console.log(followers.length, friends.length, friend_list);
+        unfollowAll(followers,friends, friend_list);
+    });
+}
+//getScreenNameFromId(707707526058549200);
+//getScreenNameFromId("707707526058549200");
 //getIdFromScreenName("jihoonielovely");
 
 // T.post('friendships/destroy', {screen_name: 'ThaboTotal'},
@@ -112,13 +104,13 @@ var friend_list = ["larochkk", "paulaemcima", "phaser_"];
 
 
 
-new Promise( (resolve,reject) => {
-    T.get('friends/list', (err,data) => {
-        if(err){ reject(err); }
-        else{ resolve(data);}
-    });
-}).then(result => {
-    // result = result.map(x => x.screen_name);
-    console.log(result);
-});
+// new Promise( (resolve,reject) => {
+//     T.get('friends/list', (err,data) => {
+//         if(err){ reject(err); }
+//         else{ resolve(data);}
+//     });
+// }).then(result => {
+//     // result = result.map(x => x.screen_name);
+//     console.log(result);
+// });
 
