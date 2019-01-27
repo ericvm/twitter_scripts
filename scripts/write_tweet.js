@@ -24,7 +24,7 @@
 console.log("The script started\n\n");
 
 var Twit = require('twit');
-const keys = require("./secret_keys");
+const keys = require("../modules/secret_keys");
 var T = new Twit(keys);
 
 // tweet text, may be longer than 280 char

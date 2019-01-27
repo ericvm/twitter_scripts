@@ -4,20 +4,26 @@ var Twit = require('twit');
 const keys = require("./secret_keys");
 var T = new Twit(keys);
 
-// get people that follow you
-function getFollowers(){
-    return new Promise( (resolve,reject) => {
-    T.get('followers/ids', (err,data) => {
-        if(err){ reject(err); }
-        else{ resolve(data.ids);}
-    });
-    }).then(result => result);
+
+export default class Connections{
+    constructor(){}
+    
+    getMyFollowers(){
+	return new Promise( (resolve,reject) => {
+	    T.get('followers/ids', {stringify_ids: true}, (err,data) => {
+		if(err){ reject(err); }
+		else{ resolve(data.ids);}
+	    });
+	}).then(result => result);
+    }
+    
 }
+
 
 // get People that you follow
 function getFriends(){
     return new Promise( (resolve,reject) => {
-    T.get('friends/ids', (err,data) => {
+	T.get('friends/ids', {stringify_ids: true}, (err,data) => {
         if(err){ reject(err); }
         else{ resolve(data.ids);}
     });
@@ -56,11 +62,18 @@ function buildFriendlist(friend_list) {
 function kill(friend_id){
     T.post('friendships/destroy', {id: friend_id},
 	   (err,data) => {
-	       if(err){  console.log(err);}// + " Id: " + friend_id); }
+	       if(err){  console.log(err + " Id: " + friend_id); }
 	       else{ console.log("unfollowed "+ data.screen_name); }
 	   });
 }
 
+function follow_one(friend_id){
+    T.post('friendships/create', {id: friend_id},
+	   (err,data) => {
+	       if(err){  console.log(err + " Id: " + friend_id); }
+	       else{ console.log("followed "+ data.screen_name); }
+	   });
+}
 
 function unfollowAll(followers, friends, friend_list){
     friends.forEach( friend => {
@@ -70,6 +83,28 @@ function unfollowAll(followers, friends, friend_list){
 	}
     }); 
 }
+
+function followAll(followers, friends, friend_list){
+    followers.forEach( follower => {
+	// if friend is not in friend_list and is not your follower
+	if( friend_list.indexOf(follower) < 0 && friends.indexOf(follower) < 0){
+	    follow_one(follower);
+	}
+    }); 
+}
+
+
+function follow(){
+    var friend_list = [];
+
+    Promise.all(
+        [getFollowers(), getFriends(), buildFriendlist(friend_list)]
+    ).then( ([followers, friends, friend_list]) => {
+        console.log(followers.length, friends.length, friend_list);
+        followAll(followers,friends, friend_list);
+    });
+}
+
 
 function unfollow(){
     var friend_list = ["larochkk", "paulaemcima", "phaser_"];
@@ -81,36 +116,7 @@ function unfollow(){
         unfollowAll(followers,friends, friend_list);
     });
 }
-//getScreenNameFromId(707707526058549200);
-//getScreenNameFromId("707707526058549200");
-//getIdFromScreenName("jihoonielovely");
-
-// T.post('friendships/destroy', {screen_name: 'ThaboTotal'},
-// 	   (err,data) => {
-// 	       if(err){
-// 		   console.log(err.message );
-// 	       }
-// 	       else{
-// 		   console.log("unfollowed "+ data.screen_name);
-// 	       }
-// 	   });
-
-// T.get('users/show', {screen_name: "jihoonielovely"}, (err,data) => {
-//             if(err){console.log(err);}
-//             else{console.log(data.id);}
-//         });
-
-// kill(1001612331590139900);
 
 
-
-// new Promise( (resolve,reject) => {
-//     T.get('friends/list', (err,data) => {
-//         if(err){ reject(err); }
-//         else{ resolve(data);}
-//     });
-// }).then(result => {
-//     // result = result.map(x => x.screen_name);
-//     console.log(result);
-// });
+follow();
 
