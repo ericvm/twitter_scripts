@@ -53,9 +53,14 @@ module.exports = {
     follow: function(id){
 	T.post('friendships/create', {id: id},
 	       (err,data) => {
-		   if(err){  console.log(err + " Id: " + id); }
-		   else{ console.log("followed "+ data.screen_name); }
-	       });
+		   if(err){
+		       console.log(err + " Id: " + id);
+		   }
+		   else{
+		       console.log("followed "+ data.screen_name);
+		   }
+	       });  
+
     },
     
     
