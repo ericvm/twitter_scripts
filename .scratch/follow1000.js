@@ -28,7 +28,28 @@ var IdList = require("../modules/id_list");
 const enemy_list = [];
 
 // Max number of people you want to follow, default is 100
-var max = 10;
+var max = 1;
+var timer = 0;
+var old =0;
+
+function followOne(friends,person,list){
+   	// if person isnt in your friendlist already and is not in your enemy_list
+    if(friends.indexOf(person) < 0 && list.indexOf(person) < 0){
+	Connections.follow(person);
+    }
+}
+
+function followAfterWait(timer, counter,people,friends,list) {
+    if(counter < 900){
+        console.log("waiting " + timer + " seconds");
+        let person = people[counter];
+        setTimeout(() => {
+            followOne(friends,person,list);
+            counter++;
+            followAfterWait(Math.floor(Math.random()*30), counter+1, people,friends,list);
+        }, timer*1000);
+    }
+}
 
 Promise.all( [
     Connections.getMyFriends(),
@@ -38,13 +59,13 @@ Promise.all( [
     let counter = 0;
     console.log(friends.length, people_to_follow.length, list);
 
-    people_to_follow.forEach(person =>{
-    	// if person isnt in your friendlist already and is not in your enemy_list
-    	if(friends.indexOf(person) < 0 && list.indexOf(person) < 0 && counter < max){
-	    Connections.follow(person);
-	    counter++;
-    	}
-    });
+    followAfterWait(0, counter,people_to_follow,friends,list);
+    
 });
+
+
+
+
+
 
 
