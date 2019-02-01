@@ -40,14 +40,22 @@ function followOne(friends,person,list){
 }
 
 function followAfterWait(timer, counter,people,friends,list) {
-    if(counter < 900){
+    if(counter < 100){
         console.log("waiting " + timer + " seconds");
         let person = people[counter];
         setTimeout(() => {
-            followOne(friends,person,list);
-            counter++;
-            followAfterWait(Math.floor(Math.random()*30), counter+1, people,friends,list);
+            if(friends.indexOf(person) < 0 && list.indexOf(person) < 0){
+	        Connections.follow(person);
+                followAfterWait(Math.floor(Math.random()*30), counter+1, people,friends,list);
+            }
+            else {
+                followAfterWait(0, counter, people,friends,list);
+            }
+            
         }, timer*1000);
+    }
+    else {
+        console.log("Ended!");
     }
 }
 
