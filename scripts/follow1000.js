@@ -28,57 +28,70 @@ var IdList = require("../modules/id_list");
 const ENEMY_LIST = [];
 
 // Max number of people you want to follow, default is 1000
-const MAX = 1000;
+const MAX = 10;
 
 // The person you want to follow zir followers, e.g. "viglionilaura"
-const TARGET = "";
+const TARGET = "detremura";
 
 
-// main method
-Promise.all( [ 
-    Connections.getMyFriends(),
-    Connections.getFollowersFrom( TARGET ),
-    IdList.buildIdList( ENEMY_LIST )
-])
-    .then( ([friends, people_to_follow, list]) => {
-        followAfterWait(0, 0, 0, people_to_follow,friends,list);    
-    });
+// execution
+follow1000(ENEMY_LIST, MAX, TARGET);
 
 
-// recursive method
-/** followAfterWait
- * @param timer (int): time in seconds to wait within this call
- * @param counter (int): how many people you already tried to follow
- * @param index (int): the index of the next person in 'people' array that you are trying to follow
- * @param people (arr): array of IDs of people you want to follow
- * @param friends (arr): array of IDs of people you've already follow
- * @param list (arr): array of IDs of people you don't want to follow
- * @returns void
+/******** Methods ********/
+/** follow1000
+ * @param ENEMY_LIST (arr): array of user of people you dont want to follow
+ * @param MAX (int): Number of follow trials
+ * @param TARGET (str): screen_name of someone you want to follow zir followers
+ * @return void
  */
-function followAfterWait(timer, counter,index,people,friends,list) {
-    console.log("waiting " + timer + " seconds.");
-    if(counter < MAX){
-        let person = people[index];
-        setTimeout(() => {
-            if(friends.indexOf(person) < 0 && list.indexOf(person) < 0){
-	        Connections.follow(person);
-                let new_timer = Math.floor(Math.random()*100);
-                console.log("Id:" + person +". Person number " + (index+1) + " on list. Already followed: " + counter);
-                followAfterWait(new_timer, counter+1, index+1,people,friends,list);
-            }
-            else {
-                console.log("Not to follow: " + person +". Person number " + (index+1) + ".");
-                followAfterWait(0, counter,index+1, people,friends,list);
-            }
-            
-        }, timer*1000);
-    }
-    else {
-        console.log("Ended!");
-    }
+function follow1000(ENEMY_LIST, MAX, TARGET) {
+    Promise.all( [ 
+        Connections.getMyFriends(),
+        Connections.getFollowersFrom( TARGET ),
+        IdList.buildIdList( ENEMY_LIST )
+    ])
+        .then( ([friends, target_followers, enemy_list]) => {
+            console.log(friends.length);
+            let to_be_followed = getFollowList(friends , target_followers, enemy_list, MAX);
+            followOne( to_be_followed, 0, to_be_followed.length);
+        });    
 }
 
 
+// Filter list
+/** getFollowList
+ * @param friends (arr): array of IDs of people you've already follow
+ * @param big_list (arr): array of IDs of people you intent to follow
+ * @param enemy_list (arr): array of IDs of people you dont want to follow
+ * @param max (int): the maximum number of people in the return array
+ * @return (arr): Array of IDs of maximum size @param max of people to be followed
+*/
+function getFollowList(friends, big_list, enemy_list, max){
+    return big_list.filter( person => friends.indexOf(person) < 0 && enemy_list.indexOf(person) < 0).splice(0,max);
+}
+
+/** followOne
+ * @param to_be_follow (arr): array of IDs of people you intent to follow
+ * @param waiting_time (int): time in seconds to wait
+ * @param max (int): initial array size of @param to_be_followed
+ * @return (arr): Array of IDs of maximum size @param max of people to be followed
+*/
+function followOne(to_be_followed, waiting_time, max){
+    console.log("Waiting " + waiting_time + " seconds.");
+    console.log("Iteration: " + (max - to_be_followed.length));
+    if(to_be_followed.length === 0){
+        console.log("Script finished!");
+    }
+    else {
+        setTimeout( () => {
+            console.log(to_be_followed.length);
+            let person = to_be_followed.pop();
+            Connections.follow( person);
+            followOne(to_be_followed, (Math.floor(Math.random()*100)), max);
+        }, waiting_time*1000);
+    }
+}
 
 
 
