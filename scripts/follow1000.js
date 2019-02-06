@@ -31,7 +31,7 @@ const ENEMY_LIST = [];
 const MAX = 10;
 
 // The person you want to follow zir followers, e.g. "viglionilaura"
-const TARGET = "detremura";
+const TARGET = "";
 
 
 // execution
